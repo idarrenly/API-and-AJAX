@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Pokedex</title>
+    <meta name="description" content="Make API calls to populate Pokemon images and with Ajax populate the pokedex as Pokemon is selected">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+    <!-- jQuery first, then Popper.js, then Bootstrap JS from CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+    <style>
+        .pokedex{
+            width: 195px; 
+            background-color: lightgrey; 
+            position: fixed; 
+            height: 500px;
+            border: 5px solid red;
+            border-radius: 10px;
+        }
+        .pokedex h2{
+            text-align: center;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            background-color: red;
+            color: white;
+            padding: 3px;   
+        }
+        .info{
+            text-align: center;
+            padding: 10px;
+        }
+        .info h4:first-letter{
+            text-transform: uppercase;
+        }
+        .info h6{
+            text-align: left;
+        }
+        .info li{
+            width: 40px;
+        }
+        .info p{
+            width: 70px;
+        }
+    </style>
+</head>
+<body>
+    <div class="jumbotron">
+        <h1>Pokedex</h1>
+        <p>Make API calls to populate Pokemon images and with Ajax populate the Pokedex dynamically</p>
+    </div>
+    <div class="container bg-info">
+        <div class="row">
+            <div id="left-side" class="col-sm-10">
+                <!-- Images will be appended to here -->
+            </div>
+            <div class="col-sm-2">
+                <div class="pokedex">
+                    <h2>Pokedex</h2>
+                    <div class="info">
+                        <!-- Dynamic info goes here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        $(document).ready(function(){
+
+            for (var i = 1; i < 152; i++ ){
+                $('#left-side').append("<img id='"+i+"'src='https://pokeapi.co/media/img/"+i+".png' alt='Pokemon Image'>");
+            }
+
+            $('img').click(function(){
+                var pokemonID = $(this).attr('id');
+
+                //Ajax
+                $.get("https://pokeapi.co/api/v2/pokemon/"+pokemonID+"/", function(res){
+                    console.log(res);
+
+                    var typeString = "";
+                    typeString += "<h6>Types</h6>";
+                    typeString += "<ul>"; 
+                    for(var i = 0; i < res.types.length; i++) {
+                        typeString += "<li>" + res.types[i].type.name + "</li>";
+                    }
+                    typeString += "</ul>";
+
+                    var heightString = "<h6>Height</h6><p>"+res.height+"</p>";
+                    var weightString = "<h6>Weight</h6><p>"+res.weight+"</p>";
+                    
+                    $('.info').html("<h4>"+res.name+"</h4><img src='https://pokeapi.co/media/img/"+pokemonID+".png' alt='Pokemon Image'>"+typeString+heightString+weightString);
+
+                }, 'json')
+            })
+
+        })
+
+    </script>
+</body>
+</html>
